@@ -19,6 +19,7 @@ threads = 12
  ## ##    ##  ##     ##     ##  ##   ##  ##   ##         ##
  ####     ##  ##     ##     ##  ##    ####    ######     ##
 
+###########################################################################
 
 CFRAC = 'cfrac ' + str(17545186520507317056371138836327483792789528)
 ESPRESSO = 'espresso ' + 'largest.espresso '
@@ -49,7 +50,6 @@ testname = ['cfrac', 'espresso', 'larsonN-sized', 'mstress', 'rptest',\
             'cache-scratch1', 'cache-scratchN', 'glibc-simple', 'glibc-thread',\
             'malloc-large', 'mleak', 'mleak10', 'cache-thrash1', 'cache-thrashN']
 
-###########################################################################
 
 
 REF_LD_command = "LD_PRELOAD=/home/hanchi/linux2023/rpmalloc/\
@@ -242,5 +242,23 @@ if __name__ == "__main__":
 
         ax.set_yscale('log')
 
+        for rect1, rect2 in zip(rects1, rects2):
+            height1 = rect1.get_height()
+            height2 = rect2.get_height()
+            diff = height2 - height1
+            if height1 == 0:
+                percent = float('nan')
+            else:
+                percent = diff / height1 * 100
+
+            if diff > 0:
+                ax.annotate(f'+{percent:.2f}%', xy=(rect2.get_x() + rect2.get_width() / 2, height2),
+                            xytext=(0, 3), textcoords='offset points', ha='center', va='bottom', fontsize=6)
+            elif diff < 0:
+                ax.annotate(f'{percent:.2f}%', xy=(rect2.get_x() + rect2.get_width() / 2, height2),
+                            xytext=(0, -8), textcoords='offset points', ha='center', va='top', fontsize=6)
+            else:
+                ax.annotate('0.00%', xy=(rect2.get_x() + rect2.get_width() / 2, height2),
+                            xytext=(0, 3), textcoords='offset points', ha='center', va='bottom', fontsize=6)
         plt.tight_layout()
         plt.savefig(str(column) + '.png')
